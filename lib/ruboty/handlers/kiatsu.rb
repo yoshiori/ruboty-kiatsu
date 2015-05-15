@@ -8,14 +8,19 @@ module Ruboty
       env :OPEN_WHEATHER_CITY_ID, "The city id in open wheather map. default: 1848040(minato ku) ", optional: true
 
       def check_pressure(message)
-        message.reply("#{pressure_diff[:start_time]} 〜 #{pressure_diff[:end_time]} (diff #{pressure_diff[:difference].round(2)} hpa)")
-        message.reply("!!! Low pressure Caution !!!") if pressure_diff[:difference] < -2
+        diff = pressure_diff
+        message.reply("#{strftime(diff[:start_time])} 〜 #{strftime(diff[:end_time])} (diff #{diff[:difference].round(2)} hpa)")
+        message.reply("!!! Low pressure Caution !!!") if diff[:difference] < -2
       end
 
       private
 
+      def strftime(time)
+        time.strftime("%m/%d %H:%M")
+      end
+
       def pressure_diff
-        @pressure_diff ||= Ruboty::Kiatsu::OpenWeatherMap.new(
+        Ruboty::Kiatsu::OpenWeatherMap.new(
           city_id: ENV["OPEN_WHEATHER_CITY_ID"] || 1848040,
         ).pressure_diff
       end

@@ -11,7 +11,9 @@ module Ruboty
       end
 
       def pressure_diff
-        now, three_hours  = response.body["list"].slice(0, 2)
+        list = response.body["list"]
+        idx = [list.index{|data| Time.at(data["dt"]) > Time.now} -1, 0].max
+        now, three_hours  = list.slice(idx, 2)
         {
           start_time: Time.at(now["dt"]),
           end_time: Time.at(three_hours["dt"]),
